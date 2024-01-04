@@ -1,4 +1,8 @@
 const User = require("../models/user.model");
+const bcrypt = require("bcryptjs");
+const createAccessToken = require("../libs/jwt");
+
+// Register Controller
 
 const register = async (req, res) => {
   try {
@@ -10,18 +14,26 @@ const register = async (req, res) => {
         .send("All field are required: username, email, password");
     }
 
-    const newUser = new User({ username, email, password });
-    await newUser.save();
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    // send controled response
-    res.status(201).json({
-      message: "New user successfully registered",
-      user: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-      },
-    });
+    const newUser = new User({ username, email, password: passwordHash });
+    await newUser.save();
+    const token = await createAccessToken({ id: newUser._id });
+
+    // Create token cookie and send controled response
+    res
+      .cookie("token", token, { httpOnly: true, sameSite: "strict" })
+      .status(201)
+      .json({
+        message: "New user successfully registered",
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          createdAt: newUser.createdAt,
+          updatedAt: newUser.updatedAt,
+        },
+      });
   } catch (error) {
     // Specific error managment (example: duplcate email)
     if (error.code === 11000) {
@@ -31,7 +43,7 @@ const register = async (req, res) => {
     // Hide production errors details
     const errorMessage =
       process.env.NODE_ENV === "production"
-        ? "Internal Server Srror"
+        ? "Internal Server Error"
         : error.message;
     res.status(500).json({
       message: "Authentication Error",
@@ -40,6 +52,8 @@ const register = async (req, res) => {
   }
 };
 
-const login = (req, res) => res.send("loginnn");
+// login Controller
+
+const login = (req, res) => res.send("login");
 
 module.exports = { register, login };
