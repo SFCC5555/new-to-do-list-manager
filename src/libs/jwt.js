@@ -4,19 +4,9 @@ const createAccessToken = (payload) => {
   if (!process.env.TOKEN_SECRET) {
     throw new Error("TOKEN_SECRET is not defined in the environment");
   }
-  return new Promise((resolve, reject) => {
-    jwt.sign(
-      payload,
-      process.env.TOKEN_SECRET,
-      {
-        expiresIn: "1d",
-      },
-      (err, token) => {
-        if (err) reject(err);
-        resolve(token);
-      }
-    );
-  });
+
+  token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+  return token;
 };
 
 module.exports = createAccessToken;

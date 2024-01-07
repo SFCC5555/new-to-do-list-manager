@@ -18,7 +18,7 @@ const register = async (req, res) => {
 
     const newUser = new User({ username, email, password: passwordHash });
     await newUser.save();
-    const token = await createAccessToken({ id: newUser._id });
+    const token = createAccessToken({ id: newUser._id });
 
     // Create token cookie and send controled response
     res
@@ -76,7 +76,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    const token = await createAccessToken({ id: userFound._id });
+    const token = createAccessToken({ id: userFound._id });
 
     // Create token cookie and send controled response
     res
@@ -108,32 +108,56 @@ const login = async (req, res) => {
 // logout Controller
 
 const logout = (req, res) => {
-  res
-    .cookie("token", "", {
-      expires: new Date(0),
-      httpOnly: true,
-      sameSite: "strict",
-    })
-    .status(200)
-    .json({ message: "Logout successful" });
+  try {
+    res
+      .cookie("token", "", {
+        expires: new Date(0),
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .status(200)
+      .json({ message: "Logout successful" });
+  } catch (error) {
+    // Hide production errors details
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error.message;
+    res.status(500).json({
+      message: "Failed to logout",
+      error: errorMessage,
+    });
+  }
 };
 
 // profile Controller
 
 const profile = async (req, res) => {
-  const userFound = await User.findById(req.user.id);
+  try {
+    const userFound = await User.findById(req.user.id);
 
-  if (!userFound) {
-    return res.status(400).json({ message: "User not found" });
+    if (!userFound) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    res.json({
+      id: userFound._id,
+      username: userFound.username,
+      email: userFound.email,
+      createdAt: userFound.createdAt,
+      updatedAt: userFound.updatedAt,
+    });
+  } catch (error) {
+    // Hide production errors details
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error.message;
+    res.status(500).json({
+      message: "Failed to get the user profile",
+      error: errorMessage,
+    });
   }
-
-  res.json({
-    id: userFound._id,
-    username: userFound.username,
-    email: userFound.email,
-    createdAt: userFound.createdAt,
-    updatedAt: userFound.updatedAt,
-  });
 };
 
 module.exports = { register, login, logout, profile };
