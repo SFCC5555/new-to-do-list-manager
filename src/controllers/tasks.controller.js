@@ -100,17 +100,15 @@ const updateTask = async (req, res) => {
         .json({ message: "Title and description are required" });
     }
 
-    const task = await Task.findOne({ _id: req.params.id, user: req.user.id });
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { title, description, date }
+      //{ new: true }
+    );
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
-
-    await Task.findByIdAndUpdate(
-      req.params.id,
-      { title, description, date }
-      //{ new: true }
-    );
 
     const updatedTask = await Task.findById(req.params.id).populate(
       "user",
@@ -136,11 +134,26 @@ const updateTask = async (req, res) => {
 // deleteTasks controller
 
 const deleteTask = async (req, res) => {
-  const task = await Task.findByIdAndDelete(req.params.id);
-  if (!task) {
-    return res.status(404).json({ message: "Task not found" });
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.sendStatus(204);
+  } catch (error) {
+    // Hide production errors details
+    const errorMessage =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error.message;
+    res.status(500).json({
+      message: "Failed to delete the task",
+      error: errorMessage,
+    });
   }
-  res.sendStatus(204);
 };
 
 module.exports = {

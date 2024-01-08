@@ -140,7 +140,7 @@ const profile = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    res.json({
+    res.status(200).json({
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
