@@ -35,9 +35,9 @@ const register = async (req, res) => {
         },
       });
   } catch (error) {
-    // Specific error managment (example: duplcate email)
+    // Specific error managment (example: duplicate email)
     if (error.code === 11000) {
-      return res.status(400).json({ message: "Email is already in use" });
+      return res.status(400).json({ message: "Email or username is already in use" });
     }
 
     // Hide production errors details
