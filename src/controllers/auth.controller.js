@@ -37,7 +37,9 @@ const register = async (req, res) => {
   } catch (error) {
     // Specific error managment (example: duplicate email)
     if (error.code === 11000) {
-      return res.status(400).json({ message: "Email or username is already in use" });
+      return res
+        .status(400)
+        .json({ message: "Email or username is already in use" });
     }
 
     // Hide production errors details
@@ -46,8 +48,7 @@ const register = async (req, res) => {
         ? "Internal Server Error"
         : error.message;
     res.status(500).json({
-      message: "Authentication Error",
-      error: errorMessage,
+      message: "Authentication Error :" + errorMessage,
     });
   }
 };
@@ -99,8 +100,7 @@ const login = async (req, res) => {
         ? "Internal Server Error"
         : error.message;
     res.status(500).json({
-      message: "Authentication Error",
-      error: errorMessage,
+      message: "Authentication Error :" + errorMessage,
     });
   }
 };
@@ -124,8 +124,7 @@ const logout = (req, res) => {
         ? "Internal Server Error"
         : error.message;
     res.status(500).json({
-      message: "Failed to logout",
-      error: errorMessage,
+      message: "Failed to logout, Error: " + errorMessage,
     });
   }
 };
@@ -154,8 +153,7 @@ const profile = async (req, res) => {
         ? "Internal Server Error"
         : error.message;
     res.status(500).json({
-      message: "Failed to get the user profile",
-      error: errorMessage,
+      message: "Failed to get the user profile, Error: " + errorMessage,
     });
   }
 };

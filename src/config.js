@@ -1,4 +1,4 @@
 // config.js
 module.exports = {
-  allowedOrigins: ["https://sfcc-the-wall.netlify.app"],
+  allowedOrigins: ["http://localhost:5173"],
 };
