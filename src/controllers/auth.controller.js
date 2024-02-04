@@ -22,7 +22,7 @@ const register = async (req, res) => {
 
     // Create token cookie and send controled response
     res
-      .cookie("token", token, { httpOnly: true })
+      .cookie("token", token)
       .status(201)
       .json({
         message: "New user successfully registered",
@@ -81,7 +81,7 @@ const login = async (req, res) => {
 
     // Create token cookie and send controled response
     res
-      .cookie("token", token, { httpOnly: true })
+      .cookie("token", token)
       .status(201)
       .json({
         message: "User successfully logged",
