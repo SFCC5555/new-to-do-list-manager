@@ -85,7 +85,6 @@ const login = async (req, res) => {
     // Create token cookie and send controled response
     res
       .cookie("token", token, {
-        httpOnly: true,
         sameSite: "Strict",
       })
       .status(201)
