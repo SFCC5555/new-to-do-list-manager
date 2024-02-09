@@ -84,9 +84,7 @@ const login = async (req, res) => {
 
     // Create token cookie and send controled response
     res
-      .cookie("token", token, {
-        sameSite: "Strict",
-      })
+      .cookie("token", token)
       .status(201)
       .json({
         message: "User successfully logged",
