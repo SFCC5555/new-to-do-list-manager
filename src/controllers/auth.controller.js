@@ -22,10 +22,7 @@ const register = async (req, res) => {
 
     // Create token cookie and send controled response
     res
-      .cookie("token", token, {
-        httpOnly: true,
-        sameSite: "Strict",
-      })
+      .cookie("token", token, { httpOnly: true, sameSite: "strict" })
       .status(201)
       .json({
         message: "New user successfully registered",
@@ -35,7 +32,6 @@ const register = async (req, res) => {
           email: newUser.email,
           createdAt: newUser.createdAt,
           updatedAt: newUser.updatedAt,
-          token: token,
         },
       });
   } catch (error) {
@@ -85,10 +81,7 @@ const login = async (req, res) => {
 
     // Create token cookie and send controled response
     res
-      .cookie("token", token, {
-        httpOnly: true,
-        sameSite: "Strict",
-      })
+      .cookie("token", token, { httpOnly: true, sameSite: "strict" })
       .status(201)
       .json({
         message: "User successfully logged",
@@ -98,7 +91,6 @@ const login = async (req, res) => {
           email: userFound.email,
           createdAt: userFound.createdAt,
           updatedAt: userFound.updatedAt,
-          token: token,
         },
       });
   } catch (error) {
