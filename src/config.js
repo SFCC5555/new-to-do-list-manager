@@ -1,7 +1,6 @@
 // config.js
 module.exports = {
   allowedOrigins: [
-    "http://localhost:5173",
-    "https://to-do-list.pro",
+    "http://localhost:5173"
   ],
 };
